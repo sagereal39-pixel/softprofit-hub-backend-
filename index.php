@@ -12,13 +12,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/middleware/auth.php';
 
+// Figure out which URL segment is the base folder (if any), so this
+// works both locally (e.g. /softprofit-api/posts) and on Render,
+// where the app is deployed at the domain root (e.g. /posts).
+$scriptDir = trim(dirname($_SERVER['SCRIPT_NAME']), '/'); // '' at root, 'softprofit-api' locally
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = trim($uri, '/');
+
+// Strip the base folder prefix from the URI, if present
+if ($scriptDir !== '' && strpos($uri, $scriptDir) === 0) {
+    $uri = trim(substr($uri, strlen($scriptDir)), '/');
+}
+
 $parts = explode('/', $uri);
 
-$resource = $parts[1] ?? '';
-$sub      = $parts[2] ?? '';
-$id       = $parts[3] ?? null;
+$resource = $parts[0] ?? '';
+$sub      = $parts[1] ?? '';
+$id       = $parts[2] ?? null;
 
 $method = $_SERVER['REQUEST_METHOD'];
 
