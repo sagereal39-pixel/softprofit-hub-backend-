@@ -1,15 +1,16 @@
 <?php
-header('Content-Type: application/xml; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-
-require_once __DIR__ . '/config/database.php';
+// routes/sitemap.php
+// Generates the XML sitemap dynamically from published posts.
+// Content-Type is set by index.php before this file is included.
 
 $db = getDB();
-$siteUrl = 'https://softprofithub.com'; // change to your domain
 
-$result = $db->query("SELECT slug, updated_at FROM posts WHERE status='published' ORDER BY updated_at DESC");
-$posts = [];
-while ($row = $result->fetch_assoc()) $posts[] = $row;
+// Same env-var pattern used in share.php — update FRONTEND_URL on Render
+// once a custom domain is ready.
+$siteUrl = rtrim(getenv('FRONTEND_URL') ?: 'https://softprofit-hub-frontend.vercel.app', '/');
+
+$stmt = $db->query("SELECT slug, updated_at FROM posts WHERE status='published' ORDER BY updated_at DESC");
+$posts = $stmt->fetchAll();
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>

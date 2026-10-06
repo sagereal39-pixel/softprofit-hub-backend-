@@ -56,6 +56,10 @@ switch ($resource) {
         header('Content-Type: text/html; charset=utf-8');
         require_once __DIR__ . '/routes/share.php';
         break;
+    case 'sitemap':
+        header('Content-Type: application/xml; charset=utf-8');
+        require_once __DIR__ . '/routes/sitemap.php';
+        break;
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Route not found']);
