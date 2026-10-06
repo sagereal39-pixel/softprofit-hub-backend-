@@ -50,6 +50,12 @@ switch ($resource) {
         requireAuth();
         require_once __DIR__ . '/routes/admin.php';
         break;
+    case 'share':
+        // Server-rendered HTML with Open Graph tags, for link previews
+        // and crawlers — overrides the default JSON Content-Type above.
+        header('Content-Type: text/html; charset=utf-8');
+        require_once __DIR__ . '/routes/share.php';
+        break;
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Route not found']);
