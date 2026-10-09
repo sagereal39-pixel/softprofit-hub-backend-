@@ -10,6 +10,9 @@ RUN a2enmod rewrite
 # Allow .htaccess overrides (Apache disables this by default)
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
+# Production PHP settings: errors are written to the log, never shown to visitors
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
 # Copy your project files into Apache's web root
 COPY . /var/www/html/
 

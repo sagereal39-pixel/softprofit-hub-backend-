@@ -1,4 +1,13 @@
 RewriteEngine On
+
+# Security: only index.php and upload.php may be executed directly.
+# Any other .php file (a leftover script, or anything that ever ends up in a
+# folder) is handed to the router, which answers "Route not found".
+RewriteCond %{REQUEST_URI} \.php$ [NC]
+RewriteCond %{REQUEST_URI} !(^|/)(index|upload)\.php$ [NC]
+RewriteRule ^ index.php [QSA,L]
+
+# Normal routing: anything that isn't a real file or folder goes to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

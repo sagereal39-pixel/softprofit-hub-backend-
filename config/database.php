@@ -39,7 +39,10 @@ function getDB()
         } catch (PDOException $e) {
             http_response_code(500);
             header('Content-Type: application/json');
-            echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
+            // Details go to the server log (visible in Render's Logs tab),
+            // never to the visitor.
+            error_log('DB connection failed: ' . $e->getMessage());
+            echo json_encode(['error' => 'Database connection failed']);
             exit();
         }
     }
