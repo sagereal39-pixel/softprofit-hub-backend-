@@ -18,20 +18,8 @@ if ($method === 'POST' && $sub === 'login') {
         exit();
     }
 
-    // TEMP: if password is not a valid bcrypt hash, rehash it
-    if (substr($user['password'], 0, 4) !== '$2y$') {
-        $newHash = password_hash($password, PASSWORD_BCRYPT);
-        $upd = $db->prepare("UPDATE users SET password = :password WHERE email = :email");
-        $upd->execute(['password' => $newHash, 'email' => $email]);
-        $token = generateToken($user['id'], $user['role']);
-        echo json_encode([
-            'token' => $token,
-            'user' => ['id' => $user['id'], 'name' => $user['name'], 'email' => $user['email'], 'role' => $user['role']]
-        ]);
-        exit();
-    }
-
-    // Normal bcrypt verify
+    // Bcrypt verify. A stored value that isn't a valid bcrypt hash simply
+    // fails verification, so nobody can log in with it.
     if (password_verify($password, $user['password'])) {
         $token = generateToken($user['id'], $user['role']);
         echo json_encode([
